@@ -25,6 +25,18 @@ calibration_raw = @chain read_csv("data/calibration/All estimation raw data.csv"
         @arrange(set)
     end
 
+# Competititon data (for testing)
+
+competition_raw_game_block = @chain read_csv("data/competition/individual-track/Data-to-predict-Track-2.csv") begin
+        @clean_names()
+    end
+
+competition_raw = @chain read_csv("data/competition/individual-track/raw-comp-set-data-Track-2.csv") begin
+        @clean_names()
+end
+
+@glimpse(competition_raw)
+
 # Exploratory data analysis (EDA) -------------------------------------------------------
 
 # Glimpse
