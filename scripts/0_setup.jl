@@ -10,7 +10,6 @@ using Pkg
 Pkg.generate("final_env")
 Pkg.activate("final_env")
 
-
 # Install packages -----------------------------------------------------------------
 
 # Install packages that will be needed for the project
@@ -20,3 +19,5 @@ Pkg.add("CSV")
 Pkg.add("TidierData")
 Pkg.add("TidierFiles")
 Pkg.add("Flux")
+
+# Both TidierData and Flux load Chain, so must always call Flux.Chain
