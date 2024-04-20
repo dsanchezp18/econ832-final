@@ -41,10 +41,15 @@ df = @chain calibration_cleaned begin
     @filter(experiment_1 == 1)
     @select(subjid, location_rehovot, gender_female, age, # Demographics
             shape_a_symm, shape_a_rskew, shape_a_lskew, shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
-            lotnuma, lotnumb, p_ha, p_hb, ha, hb, amb, corr, trial, button,  # Other variables related to the lottery
-            payoff, forgone, apay, bpay, # payoff variables
-            b )# Outcome variable
+            lotnuma, lotnumb, p_ha, p_hb, ha, hb, lb, la, amb, corr, trial, button_a,   # Other variables related to the lottery
+            payoff, forgone, apay, bpay, block, # payoff variables
+            set_5, set_6, # Sets
+            b) # Outcome variable
 end
+
+dropmissing!(df)
+
+@glimpse(df)
 
 ## Test-train split -------------------------------------------------------------------
 
@@ -57,6 +62,7 @@ Random.seed!(593)
 df_train = @chain df begin
     @slice_sample(prop = 0.8, replace = false)
 end
+
 
 # Use an antijoin to produce the testing data
 
@@ -88,9 +94,9 @@ end
 
 # Separate data in X and Y
 
-features = Matrix(train_simple_dfnn[:, Not(:b)])
+features = Matrix(df_train[:, Not(:b, :subjid)])
 
-outcome = train_simple_dfnn.b # No need to hot encode the outcome variable since it is binary
+outcome = df_train.b # No need to hot encode the outcome variable since it is binary
 
 # Standardize continuous variables, mean of 0 and sd 1
 
@@ -109,7 +115,7 @@ data = [(X, Y)]
 # Define your model
 
 model = Flux.Chain(
-    Dense(3, 64, Flux.relu),
+    Dense(size(X)[1], 64, Flux.relu),
     Dense(64, 64, Flux.relu),
     Dense(64, 1, Flux.sigmoid)
 )
@@ -156,9 +162,9 @@ accuracy_train = sum(diag(confusion_matrix_train)) / sum(confusion_matrix_train)
 
 # Extract X and Y from calibration_test
 
-features_test = Matrix(test_simple_dfnn[:, Not(:b)])
+features_test = Matrix(df_test[:, Not(:b, :subjid)])
 
-outcome_test = test_simple_dfnn.b
+outcome_test = df_test.b
 
 X_test = transpose(Flux.normalise(features_test, dims = 2))
 
