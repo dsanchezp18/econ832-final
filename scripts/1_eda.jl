@@ -155,10 +155,10 @@ end
     @distinct()
 end
 
-# La and Lb
+# La and Lb, Ha, Hb
 
 @chain exp1_df begin
-    @select(la, lb) 
+    @select(la, lb, ha, hb) 
     @distinct()
 end
 
@@ -173,5 +173,12 @@ end
 
 @chain exp1_df begin
     @select(feedback) 
+    @distinct()
+end
+
+# LotNumA, LotNumB
+
+@chain exp1_df begin
+    @select(lotnuma, lotnumb) 
     @distinct()
 end
