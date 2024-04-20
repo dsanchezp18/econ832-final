@@ -1,5 +1,5 @@
 ---
-title: "ECON832 Final"
+title: "ECON832 Final: Mini Paper"
 author: "Daniel Sánchez Pazmiño"
 date: "2024-04-24"
 date-format: "MMMM YYYY"
@@ -10,7 +10,7 @@ execute:
     warning: false
     message: false
 number-sections: true
-#bibliography: "https://api.citedrive.com/bib/caa79ed9-32d0-42b5-a8f6-e3f1d3549663/references.bib?x=eyJpZCI6ICJjYWE3OWVkOS0zMmQwLTQyYjUtYThmNi1lM2YxZDM1NDk2NjMiLCAidXNlciI6ICIxNzk4IiwgInNpZ25hdHVyZSI6ICI1MDdmYTJjNTFmNmY3NjBmZjY1ZTA3ODY2YzNhZjFiZGU1ODI3OGVmYTc5YmZhODJkODAxMGY1YmI2ZmVkMzA4In0=/bibliography.bib"
+bibliography: references.bib
 header-includes:
     - \usepackage{float}
     - \usepackage{amsmath, amsfonts, amssymb, amsthm}
@@ -29,3 +29,15 @@ Needs tinytex or a full LaTeX distribution for PDF output, change format to html
 using Pkg
 Pkg.activate("final_env")
 ```
+
+*In this mini paper, I summarize my findings from applying a feedforward neural network to predict choice between two lotteries in @plonsky_etal18 Choice Prediction Competition 2018 (CPC18). * 
+
+# Overview 
+
+The data comes from the CPC18 [@plonsky_etal17], which consists of experiments involving various decision makers choosing between two lotteries. While the complete dataset contains observations from @erev_etal17 's Choice Prediction Competition 2015 (CPC2015), I focus on the newer data exclusive to CPC18. 
+
+# References {.unnumbered}
+
+:::{.refs}
+
+:::
