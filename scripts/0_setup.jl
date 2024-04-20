@@ -23,5 +23,6 @@ Pkg.add("Random")
 Pkg.add("MLBase")
 Pkg.add("LinearAlgebra")
 Pkg.add("Parameters")
+Pkg.add("MLJ")
 
 # Both TidierData and Flux load Chain, so must always call Flux.Chain
