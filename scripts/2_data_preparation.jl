@@ -1,6 +1,6 @@
 # SFU ECON832 Final
 # Spring 2024
-# Data preparation for deep feedforward neural networks (DFNNs) (feature engineering)
+# Data preparation for deep feedforward neural networks (DFNNs)
 
 # Preliminaries -------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ calibration_raw = @chain read_csv("data/calibration/All estimation raw data.csv"
 # Data preparation -------------------------------------------------------------------
 
 # Prepare data for DFNNs
-# Categorical variables should be made into binary variables (manual one-hot encoding)
+# Categorical variables should be made into binary variables
 
 cleaned_calibration_df = @chain calibration_raw begin
     @mutate(subjid = as_string(subjid),
