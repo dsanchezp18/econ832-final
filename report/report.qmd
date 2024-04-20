@@ -1,0 +1,31 @@
+---
+title: "ECON832 Final"
+author: "Daniel Sánchez Pazmiño"
+date: "2024-04-24"
+date-format: "MMMM YYYY"
+output-file: "SANCHEZ_Daniel_final_minipaper.pdf"
+format: pdf # Change to html if LaTeX not installed or causing issues
+execute:
+    echo: false
+    warning: false
+    message: false
+number-sections: true
+#bibliography: "https://api.citedrive.com/bib/caa79ed9-32d0-42b5-a8f6-e3f1d3549663/references.bib?x=eyJpZCI6ICJjYWE3OWVkOS0zMmQwLTQyYjUtYThmNi1lM2YxZDM1NDk2NjMiLCAidXNlciI6ICIxNzk4IiwgInNpZ25hdHVyZSI6ICI1MDdmYTJjNTFmNmY3NjBmZjY1ZTA3ODY2YzNhZjFiZGU1ODI3OGVmYTc5YmZhODJkODAxMGY1YmI2ZmVkMzA4In0=/bibliography.bib"
+header-includes:
+    - \usepackage{float}
+    - \usepackage{amsmath, amsfonts, amssymb, amsthm}
+---
+
+```{julia}
+#| include: false
+#=
+To compile this Quarto notebook, run the following in the terminal:
+using Pkg
+Pkg.add("IJulia")
+using IJulia
+notebook()
+Needs tinytex or a full LaTeX distribution for PDF output, change format to html or docx if not available
+=#
+using Pkg
+Pkg.activate("final_env")
+```
