@@ -19,5 +19,8 @@ Pkg.add("CSV")
 Pkg.add("TidierData")
 Pkg.add("TidierFiles")
 Pkg.add("Flux")
+Pkg.add("Random")
+Pkg.add("MLBase")
+Pkg.add("LinearAlgebra")
 
 # Both TidierData and Flux load Chain, so must always call Flux.Chain
