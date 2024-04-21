@@ -21,7 +21,8 @@ using Random
 
 # Calibration data
 
-calibration_raw = @chain read_csv("data/calibration/All estimation raw data.csv") begin
+calibration_raw = @chain begin
+        read_csv("data/calibration/All estimation raw data.csv")
         @clean_names()
     end
 
@@ -52,14 +53,14 @@ cleaned_calibration_df = @chain calibration_raw begin
             set_5 = if_else(set == 5, 1, 0),
             set_6 = if_else(set == 6, 1, 0),
             experiment_1 = if_else(set in (5,6), 1, 0), #CPC18 experiment using sets 5 and 6
-            button_a = if_else(button == "A", 1, 0), # Potential attention check
+            button_r = if_else(button == "R", 1, 0), # Potential attention check
             shape_a_symm = if_else(lotshapea == "Symm", 1, 0), # Lot shape A Symm
             shape_b_symm = if_else(lotshapeb == "Symm", 1, 0), # Lot shape B Symm
             shape_a_rskew = if_else(lotshapea == "R-skew", 1, 0), # Lot shape A R-skew
             shape_b_rskew = if_else(lotshapeb == "R-skew", 1, 0), # Lot shape B R-skew
             shape_a_lskew = if_else(lotshapea == "L-skew", 1, 0), # Lot shape A L-skew
             shape_b_lskew = if_else(lotshapeb == "L-skew", 1, 0), # Lot shape B L-skew
-            rt = as_float(rt) # Convert reaction time to float
+            rt = as_integer(missing_if(rt, "NA")) # convert to missing values
     )
 end
 
@@ -79,14 +80,14 @@ cleaned_competition_df = @chain competition_raw begin
             set_5 = if_else(set == 5, 1, 0),
             set_6 = if_else(set == 6, 1, 0),
             experiment_1 = if_else(set in (5,6), 1, 0), #CPC18 experiment using sets 5 and 6
-            button_a = if_else(button == "A", 1, 0), # Potential attention check
+            button_r = if_else(button == "R", 1, 0), # Potential attention check
             shape_a_symm = if_else(lotshapea == "Symm", 1, 0), # Lot shape A Symm
             shape_b_symm = if_else(lotshapeb == "Symm", 1, 0), # Lot shape B Symm
             shape_a_rskew = if_else(lotshapea == "R-skew", 1, 0), # Lot shape A R-skew
             shape_b_rskew = if_else(lotshapeb == "R-skew", 1, 0), # Lot shape B R-skew
             shape_a_lskew = if_else(lotshapea == "L-skew", 1, 0), # Lot shape A L-skew
             shape_b_lskew = if_else(lotshapeb == "L-skew", 1, 0), # Lot shape B L-skew
-            rt = as_float(rt) # Convert reaction time to float
+            rt = as_integer(missing_if(rt, "NA")) # Convert reaction time to float
     )
 end
 

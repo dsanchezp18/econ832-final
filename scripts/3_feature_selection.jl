@@ -23,22 +23,27 @@ using Plots
 
 # Cleaned calibration data with all features
 
-calibration_cleaned = @chain read_csv("data/output/cleaned_calibration.csv") begin
+calibration_cleaned = @chain begin
+        read_csv("data/output/cleaned_calibration.csv",
+                 missingstring = ["NA"])
         @clean_names()
+end
+
+# Cleaned experiment 1 data with all features
+
+df_exp1 = @chain begin
+    read_csv("data/output/df_exp1.csv",
+             missingstring = ["NA"])
+    @clean_names()
 end
 
 # Data preparation -------------------------------------------------------------------
 
 # Quick data preparation for the feature selection analysis
 
-# Filter for experiment 1 data 
-
-df = @chain calibration_cleaned begin
-    @filter(experiment_1 == 1)
+df = @chain df_exp1 begin
     @mutate(choice = if_else(b == 1, "B", "A"))
 end 
-
-dropmissing(df)
 
 # Descriptive statistics -------------------------------------------------------------------
 
@@ -145,12 +150,11 @@ pvalue(CorrelationTest(df.corr, df.b)) # Statistically significant
 
 # Do a scatter plot of the correlation between lotteries against the outcome variable (using TidierPlots)
 
-obs_by_corr = 
-@chain df begin
-    @group_by(choice, corr)
-    @summarize(number = n())
-    @mutate(corr = as_string(corr))
-    @ungroup()
+obs_by_corr =  @chain df begin
+        @group_by(choice, corr)
+        @summarize(number = n())
+        @mutate(corr = as_string(corr))
+        @ungroup()
 end
 
 ggplot(obs_by_corr) +
@@ -311,10 +315,86 @@ forgone_boxplot
 
 ## Reacton time -------------------------------------------------------------------
 
+# Filter out missing values in reaction time
+
+df_with_rt = @chain df begin
+    @filter(!ismissing(rt))
+end
+
 # Correlate reaction time with the outcome variable to observe the relationship and justify its inclusion in the DFNN
 
-cor(df.rt, df.b)
+cor(df_with_rt.rt, df_with_rt.b)
 
 # Perform correlation test
 
-pvalue(CorrelationTest(df.rt, df.b)) # Not statistically significant
+pvalue(CorrelationTest(df_with_rt.rt, df_with_rt.b)) # Not statistically significant
+
+## Feedback -------------------------------------------------------------------
+
+# Bar plot comparing choices with feedback and without feedback
+
+choices_by_feedback = @chain df begin
+    @mutate(feedback = if_else(feedback == 1, "No Feedback", "Feedback"))
+    @group_by(choice, feedback)
+    @summarize(number = n())
+    @ungroup()
+end
+
+barplot_by_feedback =
+    ggplot(choices_by_feedback) +
+    geom_col(@aes(x = choice, y = number, colour = feedback), position = "dodge") +
+    labs(title = "Number of Choices by Feedback",
+         x = "Choice of lottery B or A",
+         y = "Number of Observations") +
+    scale_colour_manual(values = ["#F8766D", "#00BFC4"])
+
+barplot_by_feedback
+
+# Feedback greatly favours A
+
+# Blocks -------------------------------------------------------------------
+
+# Correlation of time blocks with the outcome variable
+
+cor(df.block, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.block, df.b)) # Not statistically significant
+
+# Button -------------------------------------------------------------------
+
+# Correlation of button with the outcome variable
+
+cor(df.button_r, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.button_r, df.b)) # Statistically significant
+
+# Column plot
+
+choices_by_button = @chain df begin
+    @mutate(button_r = if_else(button_r == 1, "Button R", "Button L"))
+    @group_by(choice, button_r)
+    @summarize(number = n())
+    @ungroup()
+end
+
+columnplot_by_button =
+    ggplot(choices_by_button) +
+    geom_col(@aes(x = choice, y = number, colour = button_r), position = "dodge") +
+    labs(title = "Number of Choices by Button",
+         x = "Choice of lottery B or A",
+         y = "Number of Observations") +
+    scale_colour_manual(values = ["#F8766D", "#00BFC4"])
+
+## Trial -------------------------------------------------------------------
+
+# Correlation of trial with the outcome variable
+
+cor(df.trial, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.trial, df.b)) # Not statistically significant
