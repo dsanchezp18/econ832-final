@@ -271,3 +271,38 @@ ggplot(df) +
          y = "Payoff of B")
 
 payoff_b_boxplot
+
+# Attention features -------------------------------------------------------------------
+
+## Order of the lotteries -------------------------------------------------------------------
+
+# Correlate order of lotteries with the outcome variable to observe the relationship and justify its inclusion in the DFNN
+
+cor(df.order, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.order, df.b)) # Not statistically significant
+
+# Not statistically significant
+
+## Forgone -------------------------------------------------------------------
+
+# Correlate the forgone lottery with the outcome variable to observe the relationship and justify its inclusion in the DFNN
+
+cor(df.forgone, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.forgone, df.b)) # Statistically significant
+
+# Do a boxplot 
+
+forgone_boxplot =
+    ggplot(df) +
+    geom_boxplot(@aes(x = choice, y = forgone)) +
+    labs(title = "Boxplot of Forgone against Choice of Lottery",
+         x = "Choice of lottery B or A",
+         y = "Forgone")
+
+forgone_boxplot

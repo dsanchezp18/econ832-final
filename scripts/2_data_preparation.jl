@@ -59,6 +59,7 @@ cleaned_calibration_df = @chain calibration_raw begin
             shape_b_rskew = if_else(lotshapeb == "R-skew", 1, 0), # Lot shape B R-skew
             shape_a_lskew = if_else(lotshapea == "L-skew", 1, 0), # Lot shape A L-skew
             shape_b_lskew = if_else(lotshapeb == "L-skew", 1, 0), # Lot shape B L-skew
+            rt = as_float(rt) # Convert reaction time to float
     )
 end
 
@@ -85,6 +86,7 @@ cleaned_competition_df = @chain competition_raw begin
             shape_b_rskew = if_else(lotshapeb == "R-skew", 1, 0), # Lot shape B R-skew
             shape_a_lskew = if_else(lotshapea == "L-skew", 1, 0), # Lot shape A L-skew
             shape_b_lskew = if_else(lotshapeb == "L-skew", 1, 0), # Lot shape B L-skew
+            rt = as_float(rt) # Convert reaction time to float
     )
 end
 
