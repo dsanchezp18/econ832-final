@@ -31,9 +31,9 @@ end
 
 @glimpse(calibration_cleaned)
 
-# Individual competition data (clean)
+# Competition data (clean)
 
-individual_cleaned = @chain read_csv("data/output/cleaned_individual.csv") begin
+competition_cleaned = @chain read_csv("data/output/cleaned_competition.csv") begin
     @clean_names()
 end
 
@@ -193,3 +193,48 @@ predictions_test_binary_int = Int.(predictions_test_binary) .+ 1
 confusion_matrix_test = confusmat(2, vec(Y_test_int), vec(predictions_test_binary_int))
 
 accuracy_test = sum(diag(confusion_matrix_test)) / sum(confusion_matrix_test)
+
+# Testing the model on the competition data -------------------------------------------------------------------
+
+# Select relevant variables from competition data
+
+df_competition = @chain competition_cleaned begin
+    @filter(experiment_1 == 1)
+    @select(subjid, location_rehovot, gender_female, age, # Demographics
+            shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
+            lotnumb, lotnuma, lb, la, corr,   # Other variables related to the lottery 
+            set_5, set_6, # Sets
+            b) # Outcome variable
+    end
+
+dropmissing!(df_competition)
+
+# Extract X and Y from competition data
+
+features_competition = Matrix(df_competition[:, Not(:b, :subjid)])
+
+outcome_competition = df_competition.b
+
+# Feature engineering for the competition data
+
+X_competition = transpose(Flux.normalise(features_competition, dims = 2))
+
+Y_competition = transpose(outcome_competition)
+
+# Execute the model on the competition data
+
+loss(X_competition, Y_competition)
+
+# Compute the confusion matrix for the competition data
+
+predictions_competition = model(X_competition)
+
+predictions_competition_binary = predictions_competition .> 0.5
+
+Y_competition_int = Int.(Y_competition .> 0.5) .+ 1
+
+predictions_competition_binary_int = Int.(predictions_competition_binary) .+ 1
+
+confusion_matrix_competition = confusmat(2, vec(Y_competition_int), vec(predictions_competition_binary_int))
+
+accuracy_competition = sum(diag(confusion_matrix_competition)) / sum(confusion_matrix_competition)
