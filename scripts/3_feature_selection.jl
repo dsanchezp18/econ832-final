@@ -398,3 +398,15 @@ cor(df.trial, df.b)
 # Perform correlation test
 
 pvalue(CorrelationTest(df.trial, df.b)) # Not statistically significant
+
+## Forgone payoffs -------------------------------------------------------------------
+
+# Correlate the forgone payoffs with the outcome variable to observe the relationship and justify their inclusion in the DFNN
+
+cor(df.forgone, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.forgone, df.b)) # Statistically significant
+
+# Negative correlation

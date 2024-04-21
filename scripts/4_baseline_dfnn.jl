@@ -1,6 +1,6 @@
 # SFU ECON832 Final
 # Spring 2024
-# Script to train the deep feedforward neural network (DFNN)
+# Script to train the deep feedforward neural network (DFNN) with risk features only
 
 # Preliminaries -------------------------------------------------------------------
 

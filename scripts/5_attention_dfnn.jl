@@ -1,6 +1,6 @@
 # SFU ECON832 Final
 # Spring 2024
-# Script to train the deep feedforward neural network (DFNN)
+# Script to train the deep feedforward neural network (DFNN) with risk and attention features
 
 # Preliminaries -------------------------------------------------------------------
 
@@ -33,19 +33,19 @@ end
 
 # Training data (clean)
 
-training_cleaned = @chain read_csv("data/output/df_train.csv") begin
+training_cleaned = @chain read_csv("data/output/df_train.csv", missingstring = ["NA"]) begin
     @clean_names()
 end
 
 # Testing data (clean)
 
-testing_cleaned = @chain read_csv("data/output/df_test.csv") begin
+testing_cleaned = @chain read_csv("data/output/df_test.csv", missingstring = ["NA"]) begin
     @clean_names()
 end
 
 # Competition data (clean)
 
-competition_cleaned = @chain read_csv("data/output/cleaned_competition.csv") begin
+competition_cleaned = @chain read_csv("data/output/cleaned_competition.csv", missingstring = ["NA"]) begin
     @clean_names()
 end
 
@@ -53,37 +53,39 @@ end
 
 ## Selecting variables for the training data -------------------------------------------------------------------
 
-# Select the relevant variables related to lotteries for the baseline model (id and subjid gets dropped for the DFNN)
+# Select the relevant variables related to lotteries for the baseline model
 
 df_train  = @chain training_cleaned begin
-    @filter(experiment_1 == 1)
+    @filter(experiment_1 == 1, !ismissing(rt))
     @select(location_rehovot, gender_female, age, # Demographics
             shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, apay, bpay,
+            rt, feedback, #forgone, block, order, button_r, trial,
             b) # Outcome variable
 end
 
 ## Selecting variables for the testing data -------------------------------------------------------------------
 
-# Select the relevant variables related to lotteries for the baseline model (id and subjid gets dropped for the DFNN)
+# Select the relevant variables related to lotteries for the baseline model
 
 df_testing  = @chain testing_cleaned begin
-    @filter(experiment_1 == 1)
+    @filter(experiment_1 == 1, !ismissing(rt))
     @select(location_rehovot, gender_female, age, # Demographics
             shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, apay, bpay,
+            rt, feedback, #forgone, block, order, button_r, trial,
             b) # Outcome variable
 end
 
 # DFNN -------------------------------------------------------------------
 
-# Train a DFNN with risk preference variables and demographic variables
+# Train a DFNN with risk preference and attention features.
 # Outcome variable is b
 
 ## Feature engineering -------------------------------------------------------------------
@@ -100,7 +102,7 @@ end
 
 # Initialize hyperparameter arguments
 
-args = Args(lr=0.7, epochs=100)
+args = Args(lr = 0.7, epochs = 100)
 
 # Separate data in X and Y
 
@@ -207,17 +209,16 @@ accuracy_test = sum(diag(confusion_matrix_test)) / sum(confusion_matrix_test)
 # Select relevant variables from competition data
 
 df_competition = @chain competition_cleaned begin
-    @filter(experiment_1 == 1)
+    @filter(experiment_1 == 1, !ismissing(rt))
     @select(location_rehovot, gender_female, age, # Demographics
             shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
-            lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery 
+            lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, apay, bpay,
+            rt, feedback, #forgone, block, order, button_r, trial,
             b) # Outcome variable
 end
-
-dropmissing!(df_competition)
 
 # Extract X and Y from competition data
 
