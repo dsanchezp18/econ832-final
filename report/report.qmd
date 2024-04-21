@@ -73,7 +73,7 @@ A correlation analysis was performed to identify the most relevant features. The
 
 The correlation between the number of outcomes and the choice for the B lottery is 0.09, which is statistically significant at the 1% level. This means that more outcomes in the B lottery are associated with a higher probability of choosing B. The correlation between the low payoff of the lotteries and the choice for the B lottery is 0.11, which is statistically significant at the 1% level. This means that higher low payoffs in the B lottery are associated with a higher probability of choosing B. This might be a result of the risk aversion of the participants, which is a common feature in decision-making and point towards the importance of considering risk-aversion in the model rather than risk neutrality (since the expected value is not correlated). The correlation between lotteries shows a relationship with the choice of B, with negative correlation of -0.14, which is statistically significant at the 1% level. This means that the correlation between the payoffs of the lotteries is associated with a lower probability of choosing B. Again, this might point toward risk aversion, as the correlation between payoffs might be seen as a riskier option. 
 
-Finally, in terms of the shape of the distribution, I identify that a symmetric distribution greatly favours the choice of B, as seen below. 
+In terms of the shape of the distribution, I identify that a symmetric distribution greatly favours the choice of B, as seen below. Further, I also identify that the payoff that the payoff that the participant received shows a statistically significant correlation with the choice of B. I choose to include all 12 variables which jointly define the shape of the distribution in the model, as well as the payoff that the participant received plus the potential payoffs of A and B. 
 
 :::{#fig-barplot}
 
@@ -81,6 +81,8 @@ Finally, in terms of the shape of the distribution, I identify that a symmetric 
 
 Choice of lottery by shape of distribution
 :::
+
+## Attention features
 
 # References {.unnumbered}
 
