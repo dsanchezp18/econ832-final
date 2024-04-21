@@ -10,13 +10,15 @@ execute:
     warning: false
     message: false
 fig-align: center
+geometry: 
+    - margin = 1in
 fig-cap-location: top
 number-sections: true
+fontsize: 11pt
 bibliography: references.bib
 header-includes:
     - \usepackage{float}
     - \usepackage{amsmath, amsfonts, amssymb, amsthm}
-    - \usepackage[margin = 1in]{geometry}
 ---
 
 ```{julia}
