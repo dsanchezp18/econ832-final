@@ -10,26 +10,43 @@ using Pkg
 
 Pkg.activate("final_env")
 
-# Load packages
+# Parallel computing
 
-using TidierData
-using DataFrames
-using TidierFiles
-using Flux
-using MLBase
-using Random
-using LinearAlgebra
-using Parameters: @with_kw
+using Distributed
+
+addprocs(7)
+
+# Load packages
+@everywhere begin
+    using TidierData
+    using DataFrames
+    using TidierFiles
+    using Flux
+    using MLBase
+    using Random
+    using LinearAlgebra
+    using Parameters: @with_kw
+end
 
 # Load data
 
-# Calibration data (clean)
+# Calibration data for experiment 1 (clean)
 
-calibration_cleaned = @chain read_csv("data/output/cleaned_calibration.csv") begin
+calibration_cleaned = @chain read_csv("data/output/df_exp1.csv") begin
     @clean_names()
 end
 
-@glimpse(calibration_cleaned)
+# Training data (clean)
+
+training_cleaned = @chain read_csv("data/output/df_train.csv") begin
+    @clean_names()
+end
+
+# Testing data (clean)
+
+testing_cleaned = @chain read_csv("data/output/df_test.csv") begin
+    @clean_names()
+end
 
 # Competition data (clean)
 
@@ -39,46 +56,33 @@ end
 
 # Data -------------------------------------------------------------------
 
-## Selecting variables -------------------------------------------------------------------
+## Selecting variables for the training data -------------------------------------------------------------------
 
-# Select the relevant variables related to lotteries for the baseline model (subjid gets dropped for the DFNN)
+# Select the relevant variables related to lotteries for the baseline model (id and subjid gets dropped for the DFNN)
 
-df = @chain calibration_cleaned begin
-@filter(experiment_1 == 1)
-@select(subjid, location_rehovot, gender_female, age, # Demographics
-        shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
-        lotnumb, lotnuma, lb, la, corr,   # Other variables related to the lottery 
-        set_5, set_6, # Sets
-        b) # Outcome variable
+df_train  = @chain training_cleaned begin
+    @filter(experiment_1 == 1)
+    @select(subjid, location_rehovot, gender_female, age, # Demographics
+            shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
+            shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
+            ha, hb, p_ha, p_hb, # Expected values and probabilities
+            lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
+            b) # Outcome variable
 end
 
-dropmissing!(df)
+## Selecting variables for the testing data -------------------------------------------------------------------
 
-@glimpse(df)
+# Select the relevant variables related to lotteries for the baseline model (id and subjid gets dropped for the DFNN)
 
-## Test-train split -------------------------------------------------------------------
-
-# Test-train split of 80-20
-
-Random.seed!(593)
-
-# Use slice_sample with prop = 0.8 to produce the training data
-
-df_train = @chain df begin
-@slice_sample(prop = 0.8, replace = false)
+df_testing  = @chain testing_cleaned begin
+    @filter(experiment_1 == 1)
+    @select(subjid, location_rehovot, gender_female, age, # Demographics
+            shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
+            shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
+            ha, hb, p_ha, p_hb, # Expected values and probabilities
+            lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
+            b) # Outcome variable
 end
-
-# Use an antijoin to produce the testing data
-
-df_test = @chain df begin
-@anti_join(df_train)
-end
-
-# Verify the number of observations in the training and testing data (should comply the 80-20 rule)
-
-nrow(df_train)/nrow(df) 
-
-nrow(df_test)/nrow(df)
 
 # DFNN -------------------------------------------------------------------
 
@@ -93,8 +97,13 @@ nrow(df_test)/nrow(df)
 # 3. Transpose the matrix of features to have observations as columns
 
 @with_kw mutable struct Args
-lr::Float64 = 0.5
+    lr::Float64 = 0.7
+    epochs::Int = 100  # Add this line
 end
+
+# Initialize hyperparameter arguments
+
+args = Args(lr=0.5, epochs=100)
 
 # Separate data in X and Y
 
@@ -130,13 +139,15 @@ Dense(64, 1, Flux.sigmoid)
 
 loss(X, Y) = Flux.mse(model(X), Y)
 
-# Define optimizer
+# Define optimizer: gradient descent with learning rate `args.lr`
 
-opt = ADAM(0.001, (0.9, 0.8))
+optimiser = Descent(args.lr)
 
 # Train model 
 
-Flux.train!(loss, Flux.params(model), data, opt)
+for epoch in 1:args.epochs
+    Flux.train!(loss, Flux.params(model), data, optimiser)
+end
 
 # Model evaluation -------------------------------------------------------------------
 
@@ -201,10 +212,11 @@ accuracy_test = sum(diag(confusion_matrix_test)) / sum(confusion_matrix_test)
 df_competition = @chain competition_cleaned begin
     @filter(experiment_1 == 1)
     @select(subjid, location_rehovot, gender_female, age, # Demographics
-            shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
-            lotnumb, lotnuma, lb, la, corr,   # Other variables related to the lottery 
-            set_5, set_6, # Sets
-            b) # Outcome variable
+    shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
+    shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
+    ha, hb, p_ha, p_hb, # Expected values and probabilities
+    lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery 
+    b) # Outcome variable
     end
 
 dropmissing!(df_competition)
@@ -222,6 +234,8 @@ X_competition = transpose(Flux.normalise(features_competition, dims = 2))
 Y_competition = transpose(outcome_competition)
 
 # Execute the model on the competition data
+
+# Loss
 
 loss(X_competition, Y_competition)
 

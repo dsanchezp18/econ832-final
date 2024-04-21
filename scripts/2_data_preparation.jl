@@ -15,7 +15,7 @@ Pkg.activate("final_env")
 using TidierData
 using DataFrames
 using TidierFiles
-using Flux
+using Random
 
 # Load data
 
@@ -41,7 +41,8 @@ competition_raw = @chain read_csv("data/competition/individual-track/raw-comp-se
 # Categorical variables should be made into binary variables
 
 cleaned_calibration_df = @chain calibration_raw begin
-    @mutate(subjid = as_string(subjid),
+    @mutate(id = row_number(),
+            subjid = as_string(subjid),
             location_rehovot = if_else(location == "Rehovot", 1, 0),
             gender_female = if_else(gender == "F", 1, 0),
             set_1 = if_else(set == 1, 1, 0),
@@ -66,7 +67,8 @@ end
 # Prepare data for DFNN testing
 
 cleaned_competition_df = @chain competition_raw begin
-    @mutate(subjid = as_string(subjid),
+    @mutate(id = row_number(),
+            subjid = as_string(subjid),
             location_rehovot = if_else(location == "Rehovot", 1, 0),
             gender_female = if_else(gender == "F", 1, 0),
             set_1 = if_else(set == 1, 1, 0),
@@ -86,11 +88,59 @@ cleaned_competition_df = @chain competition_raw begin
     )
 end
 
+# Test-train split -------------------------------------------------------------------
+
+# Perform a test-train split of the calibration data, but only focusing on Experiment 1
+
+# Filter for Experiment 1
+
+df_exp1 = @chain cleaned_calibration_df begin
+    @filter(experiment_1 == 1)
+end
+
+dropmissing(df_exp1)
+
+# Test-train split of 80-20
+
+Random.seed!(593)
+
+# Use slice_sample with prop = 0.8 to produce the training data
+
+df_train = @chain df_exp1 begin
+    @slice_sample(prop = 0.8, replace = false)
+end
+
+dropmissing(df_train)
+
+# Use an antijoin to produce the testing data
+
+df_test = @chain df_exp1 begin
+    @anti_join(df_train, id)
+end
+
+dropmissing(df_test)
+
+# Verify proportions
+
+nrow(df_train)/nrow(df_exp1)
+
+nrow(df_test)/nrow(df_exp1)
+
 # Exporting -------------------------------------------------------------------
 
 # Export the cleaned calibration data
 
 write_csv(cleaned_calibration_df, "data/output/cleaned_calibration.csv")
+
+# Export experiment 1 data
+
+write_csv(df_exp1, "data/output/df_exp1.csv")
+
+# Export training and testing data
+
+write_csv(df_train, "data/output/df_train.csv")
+
+write_csv(df_test, "data/output/df_test.csv")
 
 # Export the cleaned competition data
 

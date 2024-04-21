@@ -40,6 +40,44 @@ end
 
 dropmissing(df)
 
+# Descriptive statistics -------------------------------------------------------------------
+
+# Get the percentage of choices for each lottery -- this will be used to determine the baseline accuracy
+
+df_choice = @chain df begin
+    @group_by(choice)
+    @summarize(number = n())
+    @mutate(percentage = number / sum(number) * 100)
+    @ungroup()
+end
+
+# Get the percentage within each location
+
+df_choice_by_set = @chain df begin
+    @group_by(location_rehovot, choice)
+    @summarize(number = n())
+    @mutate(percentage = number / sum(number) * 100)
+    @ungroup()
+end
+
+# Get the percentage by gender
+
+df_choice_by_gender = @chain df begin
+    @group_by(gender, choice)
+    @summarize(number = n())
+    @mutate(percentage = number / sum(number) * 100)
+    @ungroup()
+end
+
+# Percentages by set 
+
+df_choice_by_set = @chain df begin
+    @group_by(choice, set)
+    @summarize(number = n())
+    @mutate(percentage = number / sum(number) * 100)
+    @ungroup()
+end
+
 # Analysis of risk features -------------------------------------------------------------------
 
 # Correlate risk features with the outcome variable to observe the relationship and justify their inclusion in the DFNN
