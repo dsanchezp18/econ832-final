@@ -12,21 +12,16 @@ Pkg.activate("final_env")
 
 # Parallel computing
 
-using Distributed
-
-addprocs(7)
-
 # Load packages
-@everywhere begin
-    using TidierData
-    using DataFrames
-    using TidierFiles
-    using Flux
-    using MLBase
-    using Random
-    using LinearAlgebra
-    using Parameters: @with_kw
-end
+
+using TidierData
+using DataFrames
+using TidierFiles
+using Flux
+using MLBase
+using Random
+using LinearAlgebra
+using Parameters: @with_kw
 
 # Load data
 
@@ -67,6 +62,7 @@ df_train  = @chain training_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
+            payoff, apay, bpay,
             b) # Outcome variable
 end
 
@@ -81,6 +77,7 @@ df_testing  = @chain testing_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
+            payoff, apay, bpay,
             b) # Outcome variable
 end
 
@@ -216,6 +213,7 @@ df_competition = @chain competition_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery 
+            payoff, apay, bpay,
             b) # Outcome variable
 end
 

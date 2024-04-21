@@ -229,3 +229,45 @@ barplot_by_lotshape
 ggsave(barplot_by_lotshape, "figures/barplot_by_lotshape.png", scale = 1.2)
 
 # A symmetric distribution greatly favours B
+
+## Payoff features -------------------------------------------------------------------
+
+# Correlate the payoff the subject got from the the choice in the current trial
+
+cor(df.payoff, df.payoff)
+
+CorrelationTest(df.b, df.payoff)
+
+# The Payoff provided by B
+
+cor(df.b, df.bpay)
+
+CorrelationTest(df.b, df.bpay)
+
+# The Payoff provided by A
+
+cor(df.b, df.apay)
+
+CorrelationTest(df.b, df.apay)
+
+# Do a boxplot of the payoff obtained by the subject against the choice of lottery
+
+payoff_boxplot = 
+ggplot(df) +
+    geom_boxplot(@aes(x = choice, y = payoff)) +
+    labs(title = "Boxplot of Payoff against Choice of Lottery",
+         x = "Choice of lottery B or A",
+         y = "Payoff")
+
+payoff_boxplot
+
+# Payoff of b against the outcome variable
+
+payoff_b_boxplot =
+ggplot(df) +
+    geom_boxplot(@aes(x = choice, y = bpay)) +
+    labs(title = "Boxplot of Payoff of B against Having chosen B",
+         x = "Choice of lottery B or A",
+         y = "Payoff of B")
+
+payoff_b_boxplot
