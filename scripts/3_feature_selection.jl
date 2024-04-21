@@ -306,3 +306,15 @@ forgone_boxplot =
          y = "Forgone")
 
 forgone_boxplot
+
+# Forgone payoff favours A
+
+## Reacton time -------------------------------------------------------------------
+
+# Correlate reaction time with the outcome variable to observe the relationship and justify its inclusion in the DFNN
+
+cor(df.rt, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.rt, df.b)) # Not statistically significant
