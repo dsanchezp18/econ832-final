@@ -62,7 +62,7 @@ end
 
 df_train  = @chain training_cleaned begin
     @filter(experiment_1 == 1)
-    @select(subjid, location_rehovot, gender_female, age, # Demographics
+    @select(location_rehovot, gender_female, age, # Demographics
             shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
@@ -76,7 +76,7 @@ end
 
 df_testing  = @chain testing_cleaned begin
     @filter(experiment_1 == 1)
-    @select(subjid, location_rehovot, gender_female, age, # Demographics
+    @select(location_rehovot, gender_female, age, # Demographics
             shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
@@ -103,11 +103,11 @@ end
 
 # Initialize hyperparameter arguments
 
-args = Args(lr=0.5, epochs=100)
+args = Args(lr=0.7, epochs=100)
 
 # Separate data in X and Y
 
-features = Matrix(df_train[:, Not(:b, :subjid)])
+features = Matrix(df_train[:, Not(:b)])
 
 outcome = df_train.b # No need to hot encode the outcome variable since it is binary
 
@@ -128,11 +128,11 @@ data = [(X, Y)]
 # Define your model
 
 model = Flux.Chain(
-Dense(size(X)[1], 64, Flux.relu),
-Dense(64, 64, Flux.relu),
-Dense(64, 64, Flux.relu),
-Dense(64, 64, Flux.relu),
-Dense(64, 1, Flux.sigmoid)
+    Dense(size(X)[1], 64, Flux.relu),
+    Dense(64, 64, Flux.relu),
+    Dense(64, 64, Flux.relu),
+    Dense(64, 64, Flux.relu),
+    Dense(64, 1, Flux.sigmoid)
 )
 
 # Define loss function based on MSE
@@ -143,7 +143,7 @@ loss(X, Y) = Flux.mse(model(X), Y)
 
 optimiser = Descent(args.lr)
 
-# Train model 
+# Train model for `args.epochs` epochs
 
 for epoch in 1:args.epochs
     Flux.train!(loss, Flux.params(model), data, optimiser)
@@ -179,9 +179,9 @@ accuracy_train = sum(diag(confusion_matrix_train)) / sum(confusion_matrix_train)
 
 # Extract X and Y from calibration_test
 
-features_test = Matrix(df_test[:, Not(:b, :subjid)])
+features_test = Matrix(df_testing[:, Not(:b)])
 
-outcome_test = df_test.b
+outcome_test = df_testing.b
 
 X_test = transpose(Flux.normalise(features_test, dims = 2))
 
@@ -211,19 +211,19 @@ accuracy_test = sum(diag(confusion_matrix_test)) / sum(confusion_matrix_test)
 
 df_competition = @chain competition_cleaned begin
     @filter(experiment_1 == 1)
-    @select(subjid, location_rehovot, gender_female, age, # Demographics
-    shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
-    shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
-    ha, hb, p_ha, p_hb, # Expected values and probabilities
-    lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery 
-    b) # Outcome variable
-    end
+    @select(location_rehovot, gender_female, age, # Demographics
+            shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes B
+            shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
+            ha, hb, p_ha, p_hb, # Expected values and probabilities
+            lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery 
+            b) # Outcome variable
+end
 
 dropmissing!(df_competition)
 
 # Extract X and Y from competition data
 
-features_competition = Matrix(df_competition[:, Not(:b, :subjid)])
+features_competition = Matrix(df_competition[:, Not(:b)])
 
 outcome_competition = df_competition.b
 
