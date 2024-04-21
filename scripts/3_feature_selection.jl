@@ -45,9 +45,17 @@ dropmissing(df)
 
 ## Expected values ---------------------------------------------------------------
 
+# Correlate expected values with the outcome variable to observe the relationship and justify their inclusion in the DFNN
+
 cor(df.hb, df.b)
 
 cor(df.ha, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.hb, df.b)) # Not statistically significant
+
+pvalue(CorrelationTest(df.ha, df.b)) # Statistically significant
 
 # Do a scatter plot of the risk features against the outcome variable (using TidierPlots)
 
@@ -107,3 +115,69 @@ ggplot(obs_by_corr) +
          x = "Correlation between Lotteries",
          y = "Number of Observations") +
     scale_colour_manual(values = ["#F8766D", "#00BFC4"])
+
+## Ambiguity -------------------------------------------------------------------
+
+# Correlate ambiguity with the outcome variable to observe the relationship and justify its inclusion in the DFNN
+
+cor(df.amb, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.amb, df.b)) # Not statistically significant
+
+## Probabilities -------------------------------------------------------------------
+
+# Correlate probabilities with the outcome variable to observe the relationship and justify their inclusion in the DFNN
+
+cor(df.p_hb, df.b)
+
+cor(df.p_ha, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.p_hb, df.b)) # Not statistically significant
+
+pvalue(CorrelationTest(df.p_ha, df.b)) # Not statistically significant
+
+## Low payoffs -------------------------------------------------------------------
+
+# Correlate low payoffs with the outcome variable to observe the relationship and justify their inclusion in the DFNN
+
+cor(df.lb, df.b)
+
+cor(df.la, df.b)
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.lb, df.b)) # Statistically significant
+
+pvalue(CorrelationTest(df.la, df.b)) # Statistically significant
+
+# Do a scatter plot of the low payoffs against the outcome variable (using TidierPlots)
+
+ggplot(df) +
+    geom_boxplot(@aes(x = choice, y = lb)) +
+    labs(title = "Boxplot of Low Payoffs of B against Having chosen B",
+         x = "Choice of lottery B or A",
+         y = "Low Payoffs of B")
+
+## Shape of the distribution -------------------------------------------------------------------
+
+# Bar plot of the shape of the distribution of the B lottery against the outcome variable
+
+df_by_lotshape  = 
+@chain df begin
+    @group_by(choice, lotshapeb)
+    @summarize(number = n())
+    @ungroup()
+end
+
+ggplot(df_by_lotshape) +
+    geom_col(@aes(x = lotshapeb, y = number, colour = choice), position = "dodge") + 
+    labs(title = "Number of Observations by Shape of the Distribution of B",
+         x = "Shape of the Distribution of B",
+         y = "Number of Observations") +
+    scale_colour_manual(values = ["#F8766D", "#00BFC4"])
+
+# A symmetric distribution greatly favours B

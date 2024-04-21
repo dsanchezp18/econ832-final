@@ -26,25 +26,30 @@ using Parameters: @with_kw
 # Calibration data (clean)
 
 calibration_cleaned = @chain read_csv("data/output/cleaned_calibration.csv") begin
-        @clean_names()
-    end
+    @clean_names()
+end
 
 @glimpse(calibration_cleaned)
+
+# Individual competition data (clean)
+
+individual_cleaned = @chain read_csv("data/output/cleaned_individual.csv") begin
+    @clean_names()
+end
 
 # Data -------------------------------------------------------------------
 
 ## Selecting variables -------------------------------------------------------------------
 
-# Select the relevant variables related to lotteries
+# Select the relevant variables related to lotteries for the baseline model (subjid gets dropped for the DFNN)
 
 df = @chain calibration_cleaned begin
-    @filter(experiment_1 == 1)
-    @select(subjid, location_rehovot, gender_female, age, # Demographics
-            shape_a_symm, shape_a_rskew, shape_a_lskew, shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
-            lotnuma, lotnumb, p_ha, p_hb, ha, hb, lb, la, amb, corr, trial, button_a,   # Other variables related to the lottery
-            payoff, forgone, apay, bpay, block, # payoff variables
-            set_5, set_6, # Sets
-            b) # Outcome variable
+@filter(experiment_1 == 1)
+@select(subjid, location_rehovot, gender_female, age, # Demographics
+        shape_b_symm, shape_b_rskew, shape_b_lskew, # Lottery shapes
+        lotnumb, lotnuma, lb, la, corr,   # Other variables related to the lottery 
+        set_5, set_6, # Sets
+        b) # Outcome variable
 end
 
 dropmissing!(df)
@@ -60,13 +65,13 @@ Random.seed!(593)
 # Use slice_sample with prop = 0.8 to produce the training data
 
 df_train = @chain df begin
-    @slice_sample(prop = 0.8, replace = false)
+@slice_sample(prop = 0.8, replace = false)
 end
 
 # Use an antijoin to produce the testing data
 
 df_test = @chain df begin
-    @anti_join(df_train)
+@anti_join(df_train)
 end
 
 # Verify the number of observations in the training and testing data (should comply the 80-20 rule)
@@ -88,7 +93,7 @@ nrow(df_test)/nrow(df)
 # 3. Transpose the matrix of features to have observations as columns
 
 @with_kw mutable struct Args
-    lr::Float64 = 0.5
+lr::Float64 = 0.5
 end
 
 # Separate data in X and Y
@@ -114,11 +119,11 @@ data = [(X, Y)]
 # Define your model
 
 model = Flux.Chain(
-    Dense(size(X)[1], 64, Flux.relu),
-    Dense(64, 64, Flux.relu),
-    Dense(64, 64, Flux.relu),
-    Dense(64, 64, Flux.relu),
-    Dense(64, 1, Flux.sigmoid)
+Dense(size(X)[1], 64, Flux.relu),
+Dense(64, 64, Flux.relu),
+Dense(64, 64, Flux.relu),
+Dense(64, 64, Flux.relu),
+Dense(64, 1, Flux.sigmoid)
 )
 
 # Define loss function based on MSE

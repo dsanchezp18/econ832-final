@@ -64,7 +64,7 @@ The model was created using the `Flux` which composes multiple layers together t
 
 The first layer is a `Dense` layer with the number of input nodes that are fed as features, 64 neurons, and a Rectified Linear Unit (ReLU) activation function for the input and hidden layer. The output layer is a `Dense` layer with 1 output node and a sigmoid activation function. The sigmoid function is commonly used for binary classification problems, as it squashes its input values to be between 0 and 1, which can be interpreted as probabilities.
 
-I use mean squared error as the loss function and the ADAM optimizer to minimize the loss function. The learning rate was set to 0.5.
+I use mean squared error as the loss function and the ADAM optimizer to minimize the loss function. The learning rate was set to 0.5. I use a confusion matrix to evalute the model's performance on the test and competition data, which allows me to also calculate the accuracy rate dividing the sum of the diagonal by the sum of the matrix (percent of true positives and true negatives).
 
 # Feature analysis
 
