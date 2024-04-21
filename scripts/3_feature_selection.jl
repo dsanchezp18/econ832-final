@@ -17,6 +17,7 @@ using DataFrames
 using TidierFiles
 using TidierPlots
 using HypothesisTests
+using Plots
 
 # Load data
 
@@ -83,11 +84,16 @@ pvalue(CorrelationTest(df.lotnuma, df.b)) # Statistically significant
 
 # Do a scatter plot of the number of lottery outcomes of b against the outcome variable (using TidierPlots)
 
-ggplot(df) +
+lotnumb_boxplot =
+    ggplot(df) +
     geom_boxplot(@aes(x = choice, y = lotnumb)) +
-    labs(title = "Boxplot of Number of Outcomes of B against Having chosen B",
+    labs(title = "Choice of lottery against number of B lottery outcomes",
          x = "Choice of lottery B or A",
          y = "Number of Outcomes of B")
+
+lotnumb_boxplot
+
+ggsave(lotnumb_boxplot, "figures/lotnumb_boxplot.png", scale = 1.5)
 
 # Correlation between lotteries ---------------------------------------------------------------
 
@@ -173,11 +179,15 @@ df_by_lotshape  =
     @ungroup()
 end
 
+barplot_by_lotshape =
 ggplot(df_by_lotshape) +
     geom_col(@aes(x = lotshapeb, y = number, colour = choice), position = "dodge") + 
-    labs(title = "Number of Observations by Shape of the Distribution of B",
-         x = "Shape of the Distribution of B",
+    labs(x = "Shape of the Distribution of B",
          y = "Number of Observations") +
     scale_colour_manual(values = ["#F8766D", "#00BFC4"])
+
+barplot_by_lotshape
+
+ggsave(barplot_by_lotshape, "figures/barplot_by_lotshape.png", scale = 1.2)
 
 # A symmetric distribution greatly favours B

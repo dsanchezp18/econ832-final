@@ -9,11 +9,14 @@ execute:
     echo: false
     warning: false
     message: false
+fig-align: center
+fig-cap-location: top
 number-sections: true
 bibliography: references.bib
 header-includes:
     - \usepackage{float}
     - \usepackage{amsmath, amsfonts, amssymb, amsthm}
+    - \usepackage[margin = 1in]{geometry}
 ---
 
 ```{julia}
@@ -30,13 +33,11 @@ using Pkg
 Pkg.activate("final_env")
 ```
 
-*In this mini paper, I summarize my findings from applying deep feedforward neural network models (DFNN) to predict choice between two lotteries in @plonsky_etal18 Choice Prediction Competition 2018 (CPC18). Two DFNss were trained, a baseline with risk features only and another with attention features.* 
-
 # Overview 
 
-The data comes from the CPC18 [@plonsky_etal17], which consists of experiments involving various decision makers choosing between two lotteries. While the complete dataset contains observations from @erev_etal17 's Choice Prediction Competition 2015 (CPC2015), I focus on the newer data exclusive to CPC18 (Experiment 1), which added feedback and attention features to the CPC15 data. 
+The data comes from the CPC18 [@plonsky_etal17], which consists of experiments involving various decision makers choosing between two lotteries. I focus on the newer data exclusive to CPC18 (Experiment 1), which added feedback and attention features to the CPC15 data. 
 
-This experiment involved sixty choice problems for 240 participants in two academic institutions in Israel. Two sets of problems were implemented, where participants faced one set of thirty problems. Each problem was faced for 25 trials, where the first five trials did not provide feedback about the forgone and obtained payoffs. A trial involved choosing between two options, where each option (A or B) involved an underlying lottery with a probability distribution [@plonsky_etal18]. I use the calibration data set to train the DFNNs and the **individual track data** (Track II) to test the model.
+This experiment involved sixty choice problems for 240 participants. Two sets of problems were implemented, where participants faced one set of thirty problems. Each problem was faced for 25 trials, where the first five trials did not provide feedback about forgone and obtained payoffs. A trial involved choosing between two options, where each option (A or B) involved an underlying lottery with a probability distribution [@plonsky_etal18]. I use the calibration data set to train the DFNNs and the **individual track data** (Track II) to test the model.
 
 # Methodology
 
@@ -50,23 +51,36 @@ Other relevant variables involve whether there is ambiguity in the probabilities
 
 Regarding attention features, I include the number of time block, reaction time, feedback binary outcome, the onscreen button and the trial number within a game. 
 
-The processing of the calibration dataset was done using `TidierData` (the Julia implementation of R's *dplyr*) and `DataFrames`. I performed a test-train split with 80% of the data used for training and 20% for testing. I further tested with the individual track data, which was not used in the training process.
+The processing of the calibration dataset was done using `TidierData.jl` and `DataFrames.jl`. I performed a test-train split with 80% of the data used for training and 20% for testing. I further tested with the individual track data @plonsky_etal_comp_ind. 
 
 ## Feature engineering
 
-As mentioned before, all categorical variables for both the risk and attention features were dichotomized. This is equivalent to **one-hot encoding**. The continuous variables were standardized to have a mean of zero and a standard deviation of one.
+As mentioned, all categorical variables for both the risk and attention features were dichotomized. This is equivalent to **one-hot encoding**. The continuous variables were **standardized** to have a mean of zero and a standard deviation of one.
 
-The data was processed from its rectangular form (every row per decision) to a long format where each row represented an attribute, and every column represented a decision. This is the standard format for neural networks using `Flux`. 
+The data was processed from its rectangular form (every row per decision) to a format where each row represented an attribute, and every column represented a decision.
 
 ## Model configuration
 
-The model was created using the `Flux` which composes multiple layers together to form a more complex network. The layers are executed in the order they are defined.
+The model is a deep feedforward network neural network (DFNN) with `Flux.jl`. I use a ReLU activation function for the input and hidden layers and a sigmoid activation function for the output layer. The sigmoid function is commonly used for binary classification problems, as it squashes its input values to be between 0 and 1, which can be interpreted as probabilities.
 
-The first layer is a `Dense` layer with the number of input nodes that are fed as features, 64 neurons, and a Rectified Linear Unit (ReLU) activation function for the input and hidden layer. The output layer is a `Dense` layer with 1 output node and a sigmoid activation function. The sigmoid function is commonly used for binary classification problems, as it squashes its input values to be between 0 and 1, which can be interpreted as probabilities.
-
-I use mean squared error as the loss function and the ADAM optimizer to minimize the loss function. The learning rate was set to 0.5. I use a confusion matrix to evalute the model's performance on the test and competition data, which allows me to also calculate the accuracy rate dividing the sum of the diagonal by the sum of the matrix (percent of true positives and true negatives).
+I use mean squared error as the loss function and the ADAM optimizer to minimize the loss function. The learning rate was set to 0.5. I use a confusion matrix and an accuracy rate (percent correctly predicted) to evalute the model's fit. 
 
 # Feature analysis
+
+## Risk features
+
+A correlation analysis was performed to identify the most relevant features. The correlation matrix shows that the number of outcomes, the low payoff of lotteries, the correlation between two possible options and the shape of the distribution are the most relevant features. 
+
+The correlation between the number of outcomes and the choice for the B lottery is 0.09, which is statistically significant at the 1% level. This means that more outcomes in the B lottery are associated with a higher probability of choosing B. The correlation between the low payoff of the lotteries and the choice for the B lottery is 0.11, which is statistically significant at the 1% level. This means that higher low payoffs in the B lottery are associated with a higher probability of choosing B. This might be a result of the risk aversion of the participants, which is a common feature in decision-making and point towards the importance of considering risk-aversion in the model rather than risk neutrality (since the expected value is not correlated). The correlation between lotteries shows a relationship with the choice of B, with negative correlation of -0.14, which is statistically significant at the 1% level. This means that the correlation between the payoffs of the lotteries is associated with a lower probability of choosing B. Again, this might point toward risk aversion, as the correlation between payoffs might be seen as a riskier option. 
+
+Finally, in terms of the shape of the distribution, I identify that a symmetric distribution greatly favours the choice of B, as seen below. 
+
+:::{#fig-barplot}
+
+![](../figures/barplot_by_lotshape.png){height=7cm}
+
+Choice of lottery by shape of distribution
+:::
 
 # References {.unnumbered}
 
