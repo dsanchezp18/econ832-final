@@ -63,7 +63,6 @@ df_train = @chain df begin
     @slice_sample(prop = 0.8, replace = false)
 end
 
-
 # Use an antijoin to produce the testing data
 
 df_test = @chain df begin
@@ -116,6 +115,8 @@ data = [(X, Y)]
 
 model = Flux.Chain(
     Dense(size(X)[1], 64, Flux.relu),
+    Dense(64, 64, Flux.relu),
+    Dense(64, 64, Flux.relu),
     Dense(64, 64, Flux.relu),
     Dense(64, 1, Flux.sigmoid)
 )
