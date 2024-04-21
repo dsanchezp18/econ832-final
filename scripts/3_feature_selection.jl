@@ -43,6 +43,8 @@ dropmissing(df)
 
 # Correlate risk features with the outcome variable to observe the relationship and justify their inclusion in the DFNN
 
+## Expected values ---------------------------------------------------------------
+
 cor(df.hb, df.b)
 
 cor(df.ha, df.b)
@@ -56,6 +58,8 @@ ggplot(df) +
          y = "E[B]")
 
 # No particular preference if we don't control for any other variables. No reason to include these features in the DFNN unless they work with other variables.
+
+# Number of outcomes of the lotteries ---------------------------------------------------------------
 
 # Correlate number of lottery outcomes with the outcome variable to observe the relationship and justify their inclusion in the DFNN
 
@@ -77,7 +81,29 @@ ggplot(df) +
          x = "Choice of lottery B or A",
          y = "Number of Outcomes of B")
 
+# Correlation between lotteries ---------------------------------------------------------------
 
-## Expected values -------------------------------------------------------------------
+# Correlate the correlation between lotteries with the outcome variable to observe the relationship and justify their inclusion in the DFNN
 
-# Correlation of the expected values of lottery B with the outcome variable (choosing B)
+cor(df.corr, df.b) 
+
+# Perform correlation test
+
+pvalue(CorrelationTest(df.corr, df.b)) # Statistically significant
+
+# Do a scatter plot of the correlation between lotteries against the outcome variable (using TidierPlots)
+
+obs_by_corr = 
+@chain df begin
+    @group_by(choice, corr)
+    @summarize(number = n())
+    @mutate(corr = as_string(corr))
+    @ungroup()
+end
+
+ggplot(obs_by_corr) +
+    geom_col(@aes(x = corr, y = number, colour = choice, group = choice), position = "dodge", stat = "identity") +
+    labs(title = "Number of Observations by Correlation between Lotteries",
+         x = "Correlation between Lotteries",
+         y = "Number of Observations") +
+    scale_colour_manual(values = ["#F8766D", "#00BFC4"])
