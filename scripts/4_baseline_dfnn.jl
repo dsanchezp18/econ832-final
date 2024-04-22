@@ -83,6 +83,8 @@ end
 
 # DFNN -------------------------------------------------------------------
 
+Random.seed!(593)
+
 # Train a DFNN with risk preference variables and demographic variables
 # Outcome variable is b
 
@@ -255,4 +257,10 @@ accuracy_competition = sum(diag(confusion_matrix_competition)) / sum(confusion_m
 
 # Export the confusion matrix of the model on the training data
 
-write
+write_csv(DataFrame(confusion_matrix_train, :auto),
+          "data/output/confusion_matrix_train_baseline_dfnn.csv")
+
+# Export the confusion matrix of the model on the competition data
+
+write_csv(DataFrame(confusion_matrix_competition, :auto),
+          "data/output/confusion_matrix_competition_baseline_dfnn.csv")

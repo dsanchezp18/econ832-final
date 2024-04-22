@@ -14,6 +14,7 @@ fig-pos: h
 geometry: 
     - margin = 1in
 fig-cap-location: top
+tbl-cap-location: top
 number-sections: true
 fontsize: 11pt
 bibliography: references.bib
@@ -32,8 +33,13 @@ using IJulia
 notebook()
 Needs tinytex or a full LaTeX distribution for PDF output, change format to html or docx if not available
 =#
+
+cd("../.")
+
 using Pkg
 Pkg.activate("final_env")
+
+using TidierFiles, PrettyTables
 ```
 
 # Overview 
@@ -85,6 +91,86 @@ In terms of the shape of the distribution, I identify that a symmetric distribut
 ## Attention features
 
 I find that the forgone payoff has a statistically significant correlation with the choice of B, with a correlation of -0.016. While reaction time does not show a significant correlation with the choice of B, I include it along time blocks in the interest that its inclusion might point towards the importance of attention, and particularly fatigue, in the decision-making process. Giving feedback to the participant also shows a notable correlation with the choice of B, as shown in @fig-payoff. Finally, a button placed toward the left marginally favours choice of A, with a correlation of -0.002 with the choice of B.
+
+# Results and discussion
+
+@tbl-confusion-baseline-dfnn-train and @tbl-confusion-baseline-dfnn-comp display confusiones matrices for the baseline model with risk features only, for both the training data and the competition data. The accuracy rate for the training data is 85.62%, while for the competition data it is 89.92%. This suggests that the model is not overfitting, as the accuracy rate is similar for both datasets. The loss value (MSE) for the training data is 0.11, while for the competition data it is 0.11 too. 
+
+:::{#tbl-panel-dfnn layout-ncol=2}
+```{julia}
+#| label: tbl-confusion-baseline-dfnn-train
+#| output: asis
+#| tbl-cap: Training data
+
+confusion_baseline_dfnn =
+    read_csv("data/output/confusion_matrix_train_baseline_dfnn.csv")
+
+header = ["A", "B"]
+
+row_names = ["A", "B"]
+
+pretty_table(confusion_baseline_dfnn, alignment = [:l, :r], backend = Val(:markdown), header = header, row_labels = row_names)
+
+```
+```{julia}
+#| label: tbl-confusion-baseline-dfnn-comp
+#| output: asis
+#| tbl-cap: Competition data
+#| tbl-column: page
+
+confusion_baseline_dfnn =
+    read_csv("data/output/confusion_matrix_competition_baseline_dfnn.csv")
+
+header = ["A", "B"]
+
+row_names = ["A", "B"]
+
+pretty_table(confusion_baseline_dfnn, alignment = [:l, :r], backend = Val(:markdown), header = header, row_labels = row_names)
+```
+Confusion matrices for the baseline DFNN model
+:::
+
+The model which considers both risk and attention features has an accuracy rate of 89.92% for the competition data, which is higher than the baseline model. The loss value for the competition data is 0.11, which is the same as the baseline model. This suggests that the inclusion of attention features does not improve the model's fit.
+
+:::{#tbl-panel-dfnn-attention layout-ncol=2}
+
+```{julia}
+#| label: tbl-confusion-attention-dfnn-train
+#| output: asis
+#| tbl-cap: Train
+#| tbl-column: page
+#| tbl-pos: h
+
+confusion_attention_dfnn =
+    read_csv("data/output/confusion_matrix_train_attention_dfnn.csv")
+
+header = ["A", "B"]
+
+row_names = ["A", "B"]
+
+pretty_table(confusion_attention_dfnn, alignment = [:l, :r], backend = Val(:markdown), header = header, row_labels = row_names)
+```
+
+```{julia}
+#| label: tbl-confusion-attention-dfnn-comp
+#| output: asis
+#| tbl-cap: Competition data
+#| tbl-column: page
+#| tbl-pos: h
+
+confusion_attention_dfnn =
+    read_csv("data/output/confusion_matrix_competition_attention_dfnn.csv")
+
+header = ["A", "B"]
+
+row_names = ["A", "B"]
+
+pretty_table(confusion_attention_dfnn, alignment = [:l, :r], backend = Val(:markdown), header = header, row_labels = row_names)
+```
+
+Confusion matrices for the DFNN model with attention features
+:::
+
 
 # References {.unnumbered}
 

@@ -62,8 +62,8 @@ df_train  = @chain training_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
-            payoff, apay, bpay,
-            rt, feedback, #forgone, block, order, button_r, trial,
+            payoff, bpay, #apay
+            rt, feedback, forgone, order, trial, #block, button_r,
             b) # Outcome variable
 end
 
@@ -78,12 +78,14 @@ df_testing  = @chain testing_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
-            payoff, apay, bpay,
-            rt, feedback, #forgone, block, order, button_r, trial,
+            payoff, bpay, #apay
+            rt, feedback, forgone, order, trial, #block, button_r,
             b) # Outcome variable
 end
 
 # DFNN -------------------------------------------------------------------
+
+Random.seed!(593)
 
 # Train a DFNN with risk preference and attention features.
 # Outcome variable is b
@@ -215,8 +217,8 @@ df_competition = @chain competition_cleaned begin
             shape_a_symm, shape_a_rskew, shape_a_lskew, # Lottery shapes A
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
-            payoff, apay, bpay,
-            rt, feedback, #forgone, block, order, button_r, trial,
+            payoff, bpay, #apay
+            rt, feedback, forgone, order, trial, #block, button_r,
             b) # Outcome variable
 end
 
@@ -251,3 +253,15 @@ predictions_competition_binary_int = Int.(predictions_competition_binary) .+ 1
 confusion_matrix_competition = confusmat(2, vec(Y_competition_int), vec(predictions_competition_binary_int))
 
 accuracy_competition = sum(diag(confusion_matrix_competition)) / sum(confusion_matrix_competition)
+
+# Export results -------------------------------------------------------------------
+
+# Save the confusion matrix and accuracy for the test and competition data
+
+write_csv(DataFrame(confusion_matrix_train, :auto),
+          "data/output/confusion_matrix_train_attention_dfnn.csv")
+
+# Export the confusion matrix of the model on the competition data
+
+write_csv(DataFrame(confusion_matrix_competition, :auto),
+          "data/output/confusion_matrix_competition_attention_dfnn.csv")
