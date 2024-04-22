@@ -1,5 +1,6 @@
 ---
 title: "ECON832 Final: Mini Paper"
+subtitle: "Choice Prediction Competition 2018 modelling with deep feedforward neural networks"
 author: "Daniel Sánchez Pazmiño"
 date: "2024-04-24"
 date-format: "MMMM YYYY"
@@ -20,7 +21,11 @@ fontsize: 11pt
 bibliography: references.bib
 header-includes:
     - \usepackage{float}
-    - \usepackage{amsmath, amsfonts, amssymb, amsthm}
+    - \floatplacement{table}{H}
+    - \setkomafont{author}{\normalsize}
+    - \setkomafont{disposition}{\bfseries \normalsize}
+    - \setkomafont{subtitle}{\normalsize}
+    - \setkomafont{date}{\normalsize}
 ---
 
 ```{julia}
@@ -130,7 +135,7 @@ pretty_table(confusion_baseline_dfnn, alignment = [:l, :r], backend = Val(:markd
 Confusion matrices for the baseline DFNN model
 :::
 
-The model which considers both risk and attention features has an accuracy rate of 52.43% for the training data and 24.12% for the competition data. This suggests that the model is overfitting, as the accuracy rate is much lower for the competition data. The loss value (MSE) for the training data is 0.25, while for the competition data it is 0.35.
+The model which considers both risk and attention features has an accuracy rate of 57.12% for the training data and 62.40% for the competition data. The loss function value for the training data is 0.246, while for the competition data it is 0.245. @tbl-confusion-attention-dfnn-train and @tbl-confusion-attention-dfnn-comp display the confusion matrices for the model with attention features.
 
 :::{#tbl-panel-dfnn-attention layout-ncol=2}
 
@@ -171,6 +176,7 @@ pretty_table(confusion_attention_dfnn, alignment = [:l, :r], backend = Val(:mark
 Confusion matrices for the DFNN model with attention features
 :::
 
+These performance metrics suggest that adding attention features to the feedforward neural network model does not improve the model's accuracy. Attention features in this context may not be as relevant as the risk features in predicting the choice of B over A, and likely add noise to the model rather than improve its predictive power. The model with risk features only is the best model to predict the choice of B over A in the way that I have defined it.
 
 # References {.unnumbered}
 

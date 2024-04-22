@@ -28,5 +28,6 @@ Pkg.add("IJulia")
 Pkg.add("TidierPlots")
 Pkg.add("HypothesisTests")
 Pkg.add("PrettyTables")
+Pkg.add("Plots")
 
 # Both TidierData and Flux load Chain, so must always call Flux.Chain

@@ -22,6 +22,7 @@ using MLBase
 using Random
 using LinearAlgebra
 using Parameters: @with_kw
+using Plots
 
 # Load data
 
