@@ -313,7 +313,7 @@ forgone_boxplot
 
 # Forgone payoff favours A
 
-## Reacton time -------------------------------------------------------------------
+## Reaction time -------------------------------------------------------------------
 
 # Filter out missing values in reaction time
 
@@ -351,6 +351,8 @@ barplot_by_feedback =
 barplot_by_feedback
 
 # Feedback greatly favours A
+
+ggsave(barplot_by_feedback, "figures/barplot_by_feedback.png", scale = 1.2)
 
 # Blocks -------------------------------------------------------------------
 
@@ -398,15 +400,3 @@ cor(df.trial, df.b)
 # Perform correlation test
 
 pvalue(CorrelationTest(df.trial, df.b)) # Not statistically significant
-
-## Forgone payoffs -------------------------------------------------------------------
-
-# Correlate the forgone payoffs with the outcome variable to observe the relationship and justify their inclusion in the DFNN
-
-cor(df.forgone, df.b)
-
-# Perform correlation test
-
-pvalue(CorrelationTest(df.forgone, df.b)) # Statistically significant
-
-# Negative correlation

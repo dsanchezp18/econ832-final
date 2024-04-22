@@ -250,3 +250,9 @@ predictions_competition_binary_int = Int.(predictions_competition_binary) .+ 1
 confusion_matrix_competition = confusmat(2, vec(Y_competition_int), vec(predictions_competition_binary_int))
 
 accuracy_competition = sum(diag(confusion_matrix_competition)) / sum(confusion_matrix_competition)
+
+# Export results -------------------------------------------------------------------
+
+# Export the confusion matrix of the model on the training data
+
+write
