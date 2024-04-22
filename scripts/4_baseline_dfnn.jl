@@ -265,7 +265,7 @@ write_csv(DataFrame(confusion_matrix_train, :auto),
 write_csv(DataFrame(confusion_matrix_competition, :auto),
           "data/output/confusion_matrix_competition_baseline_dfnn.csv")
 
-# Export accuracy and loss for the training and competition data
+# Export accuracies
 
 accuracies_df = DataFrame(
     data = ["Train", "Test", "Competition"],
@@ -273,3 +273,12 @@ accuracies_df = DataFrame(
 )
 
 write_csv(accuracies_df, "data/output/accuracies_baseline_dfnn.csv")
+
+# Export loss function values
+
+losses_df = DataFrame(
+    data = ["Train", "Test", "Competition"],
+    loss = [loss(X, Y), loss(X_test, Y_test), loss(X_competition, Y_competition)]
+)
+
+write_csv(losses_df, "data/output/losses_baseline_dfnn.csv")
