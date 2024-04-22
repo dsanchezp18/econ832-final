@@ -94,7 +94,7 @@ I find that the forgone payoff has a statistically significant correlation with 
 
 # Results and discussion
 
-@tbl-confusion-baseline-dfnn-train and @tbl-confusion-baseline-dfnn-comp display confusiones matrices for the baseline model with risk features only, for both the training data and the competition data. The accuracy rate for the training data is 85.62%, while for the competition data it is 89.92%. This suggests that the model is not overfitting, as the accuracy rate is similar for both datasets. The loss value (MSE) for the training data is 0.11, while for the competition data it is 0.11 too. 
+@tbl-confusion-baseline-dfnn-train and @tbl-confusion-baseline-dfnn-comp display confusiones matrices for the baseline model with risk features only, for both the training data and the competition data. The accuracy rate for the training data is 75.88%, while for the competition data it is 82.51%. This suggests that the model is not overfitting, as the accuracy rate is similar for both datasets. The loss value (MSE) for the training data is 0.18, while for the competition data it is 0.14 too. 
 
 :::{#tbl-panel-dfnn layout-ncol=2}
 ```{julia}
@@ -130,7 +130,7 @@ pretty_table(confusion_baseline_dfnn, alignment = [:l, :r], backend = Val(:markd
 Confusion matrices for the baseline DFNN model
 :::
 
-The model which considers both risk and attention features has an accuracy rate of 89.92% for the competition data, which is higher than the baseline model. The loss value for the competition data is 0.11, which is the same as the baseline model. This suggests that the inclusion of attention features does not improve the model's fit.
+The model which considers both risk and attention features has an accuracy rate of 52.43% for the training data and 24.12% for the competition data. This suggests that the model is overfitting, as the accuracy rate is much lower for the competition data. The loss value (MSE) for the training data is 0.25, while for the competition data it is 0.35.
 
 :::{#tbl-panel-dfnn-attention layout-ncol=2}
 

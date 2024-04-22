@@ -63,7 +63,7 @@ df_train  = @chain training_cleaned begin
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, bpay, #apay
-            rt, feedback, forgone, order, trial, #block, button_r,
+            rt, feedback, forgone, order, button_r, #trial, #block
             b) # Outcome variable
 end
 
@@ -79,7 +79,7 @@ df_testing  = @chain testing_cleaned begin
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, bpay, #apay
-            rt, feedback, forgone, order, trial, #block, button_r,
+            rt, feedback, forgone, order, button_r, #trial, #block
             b) # Outcome variable
 end
 
@@ -218,7 +218,7 @@ df_competition = @chain competition_cleaned begin
             ha, hb, p_ha, p_hb, # Expected values and probabilities
             lotnumb, lotnuma, lb, la, corr, amb,  # Other variables related to the lottery
             payoff, bpay, #apay
-            rt, feedback, forgone, order, trial, #block, button_r,
+            rt, feedback, forgone, order, button_r, #trial, #block
             b) # Outcome variable
 end
 
