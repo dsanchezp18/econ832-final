@@ -26,4 +26,4 @@ This repository contains all replication materials for the SFU ECON832 Computati
 
 - `report/`: Contains all files required to compile the `SANCHEZ_Daniel_final_minipaper.pdf` file.
 
-- `resources/`: Contains additional resources used for the construction of the minipaper.
+- `resources/`: Contains additional resources used for the minipaper.
