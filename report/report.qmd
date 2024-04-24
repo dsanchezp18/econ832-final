@@ -17,7 +17,7 @@ geometry:
 fig-cap-location: top
 tbl-cap-location: top
 number-sections: true
-fontsize: 11pt
+fontsize: 12pt
 bibliography: references.bib
 header-includes:
     - \usepackage{float}
@@ -49,7 +49,7 @@ using TidierFiles, PrettyTables
 
 # Overview 
 
-The data comes from the CPC18 [@plonsky_etal17], which consists of experiments involving decision makers choosing between two lotteries. I focus on data exclusive to CPC18 (Experiment 1), which added attention features to the CPC15 data [@erev_etal17]. This experiment involved sixty choice problems for 240 participants. I use the calibration data set to train my deep feedforward neural network and the **individual track data** (Track II) to test the model. All replicating code and files are available on the project's GitHub repository. 
+The data comes from the CPC18 [@plonsky_etal17], which consists of experiments involving decision makers choosing between two lotteries. I focus on data exclusive to CPC18 (Experiment 1), which added attention features to the CPC15 data [@erev_etal17]. This experiment involved sixty choice problems for 240 participants. I use the calibration data set to train my deep feedforward neural network and the **individual track data** (Track II) to test the model. All replicating code and files are available on the [project's GitHub repository](https://github.com/dsanchezp18/econ832-final). 
 
 <!-- Two sets of problems were implemented, where participants faced one set of thirty problems. Each problem was faced for 25 trials, where the first five trials did not provide feedback about forgone and obtained payoffs. A trial involved choosing between two options, where each option (A or B) involved an underlying lottery with a probability distribution [@plonsky_etal18]. I use the calibration data set to train the DFNNs and the **individual track data** (Track II) to test the model. -->
 
